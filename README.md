@@ -20,7 +20,7 @@ The server and client both close after a single request is made.
 
 # Assignment Requirements
 
-You are tasked with building on top an existing client/server application and configuring it to support concurrent requests. The DTO's (Data transfer objects) contained in the `Core` project will need to be expanded to allow the client to provide an 'interval' (1-10 seconds) which the server will use in order to continue sending real-time quotes back to the client application. The DTO classess will need to be modified to match the example specification below. The client will then save the XML response to an XML file on the client machine.
+You are tasked with building on top an existing client/server application and configuring it to support concurrent requests. The DTO's (Data transfer objects) contained in the `Core` project will need to be expanded to allow the client to provide an 'interval' (1-10 seconds) which the server will use in order to continue sending real-time quotes back to the client application. The response from the server should no longer be a formatted string, and instead be a proper XML response as specified in the example further down in this specification. The client will then save the XML response to an XML file on the client machine.
 
 You are free to change or expand upon the hard-coded values on the client side to get more example data. The `Additional Notes` section contains more information regarding these values and contains an extra-credit challenge to make the application more flexible.
 
