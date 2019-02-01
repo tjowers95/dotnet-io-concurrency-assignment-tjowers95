@@ -26,11 +26,9 @@ You are free to change or expand upon the hard-coded values on the client side t
 
 The server should accept client requests and create start a new `Task` to manage each client's connection and provide the client with quotes at their requested interval. The server will use the `interval` to determine how frequently to fetch quotes from the provided API which it will immediately give to the client. The task servicing the client with responses should remain running until either the client closes their application or the server is forcibly stopped.
 
-The server should remain open to new requests until the server is forcibly stopped.
-
 *Due to latency when communicating with Stock API, the timing for the interval does not have have to be precise*.
 
-The response from the server should be changed from a formatted string to a marshalled XML file. The required format of this response is shown below.
+The response from the server should be changed from a formatted string to a serializable class representing the XML structure specified below.
 
 #### Example XML response
 
@@ -63,4 +61,4 @@ Once the server sends the XML response to the client, the client application sho
 
 * The client's request data is hard-coded in the given skeleton. For 'extra-credit', implement functionality that allows this information to be deserialized from an XML file (easy) OR read in from the command-line either as arguments or by creating interactivity for gathering the user's request (more difficult).
 
-* The required fields have already been included in the project skeleton inside of `QuoteField.java` - a DTO [enum](https://docs.oracle.com/javase/tutorial/java/javaOO/enum.html).
+* The required fields have already been included in the project skeleton inside of `QuoteField.cs` - a DTO [enum](https://docs.oracle.com/javase/tutorial/java/javaOO/enum.html).
