@@ -61,6 +61,6 @@ Once the server sends the XML response to the client, the client application sho
 
 * The client will be passing a single set of fields to view. They should not be able to view different fields for different ticker symbols.
 
-* The client's request data is hard-coded in the given skeleton. For 'extra-credit', you can implement functionality that allows this information to be read in from an XML file (easy) OR read in from the command-line (more difficult). If read in from an XML file, the format should not be the same format as the `QuoteRequest`.
+* The client's request data is hard-coded in the given skeleton. For 'extra-credit', implement functionality that allows this information to be deserialized from an XML file (easy) OR read in from the command-line either as arguments or by creating interactivity for gathering the user's request (more difficult).
 
 * The required fields have already been included in the project skeleton inside of `QuoteField.java` - a DTO [enum](https://docs.oracle.com/javase/tutorial/java/javaOO/enum.html).
