@@ -15,42 +15,75 @@ namespace Server
             {
                 var requestSerializer = new XmlSerializer(typeof(QuoteRequest));
                 var responseSerializer = new XmlSerializer(typeof(QuoteResponse));
-
-                var port = 3000;
+                var port = 3000; 
                 var address = IPAddress.Parse("127.0.0.1");
-                
-                // Start TcpListener
                 var listener = new TcpListener(address, port);
                 listener.Start();
-
-                // Await connection from client
-                Console.WriteLine("Awaiting connection...");
-                var client = listener.AcceptTcpClient();
-                
-                Console.WriteLine("Received connection.");
-                using (NetworkStream stream = client.GetStream())
+         
+                bool Accepting = true;
+                while (Accepting)
                 {
-                    // Deserialize QuoteRequest
-                    var request = (QuoteRequest) requestSerializer.Deserialize(stream);
-                    
-                    // Fetch quotes from stock API
-                    Console.WriteLine("Fetching quotes");
-                    var quotes = await Stocks.Api.FetchQuotes(request);
-                    
-                    // Convert response into formatted string
-                    var quoteString = new QuoteResponse
-                    {
-                        QuoteString = Stocks.Utils.QuotesToString(quotes, request.Fields)
-                    };
+                    TcpClient Client = listener.AcceptTcpClient();
+#pragma warning disable CS4014
+                   Task.Run(async() =>
+                   {
+                        using (NetworkStream ClientStream = Client.GetStream())
+                        {
+                            QuoteRequest APIRequest = (QuoteRequest)requestSerializer.Deserialize(ClientStream);  
+                           
+                            int interval = APIRequest.Interval;
+                            SendData:
 
-                    // Serialize response back to client
-                    Console.WriteLine("Sending quote");
-                    responseSerializer.Serialize(stream, quoteString);
+                           var APIResponse = Stocks.Api.FetchQuotes(APIRequest).Result;
+                           QuoteResponse serveResponse = new QuoteResponse();
+                           int index = 0;
+                           foreach (var i in APIResponse)
+                           {
+                               serveResponse.Quote.Add(new Quote());
+                               serveResponse.Quote[index].symbol = i.Symbol;
+
+                               foreach (var j in APIRequest.Fields)
+                               {
+                                    if (j == QuoteField.Open)
+                                    {
+                                        serveResponse.Quote[index].open = i.Open;
+                                    }
+                                    else if (j == QuoteField.Close)
+                                    {
+                                        serveResponse.Quote[index].close = i.Close;
+                                    }
+                                    else if (j == QuoteField.High)
+                                    {
+                                         serveResponse.Quote[index].high = i.High;
+                                    }   
+                                    else if (j == QuoteField.Low)
+                                    {
+                                        serveResponse.Quote[index].low = i.Low;
+                                    }
+                               }
+                               index++;
+                           }
+                            // send data
+                            responseSerializer.Serialize(ClientStream, serveResponse);
+
+                            // send EOF character so we can find the size of the data on the other side
+                            ClientStream.Write(new byte[] {26}, 0, 1);
+
+                            if (interval != 0)
+                            {
+                                await Task.Delay(1000*interval);
+                                goto SendData;
+                            }
+                        }
+                   });
+#pragma warning restore CS4014
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+                Console.WriteLine(e.InnerException);
+                Console.WriteLine(e.StackTrace);
             }
         }
     }
